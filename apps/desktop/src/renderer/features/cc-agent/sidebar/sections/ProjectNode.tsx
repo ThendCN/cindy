@@ -25,7 +25,6 @@ import {
   EllipsisVertical,
   Folder,
   FolderOpen,
-  LayoutDashboard,
   SquarePen,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -547,8 +546,6 @@ const ProjectHeader = memo(function ProjectHeader({
                     : 'hidden group-hover:flex group-focus-within/slot:flex',
                 )}
               >
-                {/* 占位与下方按钮数一致:本机项目多一个「项目概览」。 */}
-                {!isRemote && <span className="size-5 shrink-0" />}
                 <span className="size-5 shrink-0" />
                 <span className="size-5 shrink-0" />
               </div>
@@ -563,16 +560,6 @@ const ProjectHeader = memo(function ProjectHeader({
                 {/* More 按钮 —— 点击锚定 menuPos 到按钮正下方,复用下面同一份
                     DropdownMenu(右键也走它,菜单 items 一份维护)。原本 Search /
                     ShowFiles / OpenInExplorer 三个独立按钮整合到这个菜单里。 */}
-                {/* 项目概览 —— 独立按钮,位于 More 之前(docs/product-rules/project-overview.md §1);
-                    远程项目暂不支持概览页,不渲染。 */}
-                {!isRemote && (
-                  <ProjectAction
-                    label={t('ccAgent.sidebar.projectAction.overview')}
-                    onClick={() => onOpenOverview(project)}
-                  >
-                    <LayoutDashboard size={14} strokeWidth={2} />
-                  </ProjectAction>
-                )}
                 <ProjectAction
                   label={t('ccAgent.common.moreActions')}
                   onClick={(e) => {
@@ -655,14 +642,26 @@ const ProjectHeader = memo(function ProjectHeader({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1 h-px bg-[var(--cmd-palette-border)]" />
                 {/* 菜单 items 顺序:浏览 → 工具 → 危险
-              [搜索, 查看文件, 在文件管理器中打开] - [复制深度链接, 同步 Codex] - [全部归档]
+              [项目概览, 搜索, 查看文件, 在文件管理器中打开] - [复制深度链接, 同步 Codex] - [全部归档]
               与 SessionItem 风格保持一致:纯文字、无 icon。
               remote 项目隐藏「查看文件 / 在文件管理器中打开 / 复制深链 / 同步 Codex」四项:
+              「项目概览」暂只支持本机项目(docs/product-rules/project-overview.md §1),remote 同样隐藏。
               前三者均按本机路径误操作或丢 host 身份;「查看文件」走本地文件 IPC、读不到远端
               host 文件系统(只能 fallback 跳对话页,反直觉),在 host-aware 远端浏览能力落地
               前一并屏蔽。remote 菜单收敛为 [搜索] - [全部归档]。
               注:handleBrowseFiles 的 remote 重定向 + WorkdirBrowseRoute 路由守卫保留,
               作为直达 /cc-agent/files/:id 的安全兜底。 */}
+                {!isRemote && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setMenuPos(null);
+                      onOpenOverview(project);
+                    }}
+                    className={MENU_ITEM_CLASS}
+                  >
+                    {t('ccAgent.sidebar.projectAction.overview')}
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => {
                     setMenuPos(null);

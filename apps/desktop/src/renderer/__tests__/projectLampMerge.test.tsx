@@ -112,31 +112,40 @@ describe('project lamp after upstream sidebar merge', () => {
 
 /*
  * 测试价值
- * - 生产入口与可观察结果:ProjectNode 项目行;悬停按钮组里「项目概览」的位置、显隐与点击结果。
- * - 规则依据:docs/product-rules/project-overview.md §1(独立按钮位于「更多」之前,远程不显示,
- *   点击只打开概览、不折叠项目行)。
- * - 现有覆盖缺口:本文件只覆盖灯语,没有覆盖项目行按钮。
- * - 最小失败输入:本机项目点击概览按钮;scope=remote 的项目。
+ * - 生产入口与可观察结果:ProjectNode 项目行;「更多」菜单里「项目概览」的位置、显隐与点击结果。
+ * - 规则依据:docs/product-rules/project-overview.md §1(入口在「更多」菜单浏览一组第一项、「搜索」之前;
+ *   远程不显示;点击只打开概览、不折叠)。PR #7523 评审讨论(#7544)把入口从独立按钮收进菜单,
+ *   悬停按钮组保持「更多 + 新建」两个,本机与远程项目一致。
+ * - 现有覆盖缺口:本文件只覆盖灯语,没有覆盖项目菜单。
+ * - 最小失败输入:本机项目打开菜单并点击概览;scope=remote 的项目打开菜单。
  * - tier:unit(jsdom),与本文件同一组件入口。
  */
 describe('project overview entry', () => {
   const OVERVIEW = 'ccAgent.sidebar.projectAction.overview';
+  const SEARCH = 'ccAgent.sidebar.projectAction.search';
+  const openMenu = (view: ReturnType<typeof render>) => {
+    fireEvent.click(view.getByLabelText('ccAgent.common.moreActions'));
+    return [...document.querySelectorAll('[role="menuitem"]')].map((item) => item.textContent);
+  };
 
-  it('sits right before More on local projects and opens the overview without toggling', () => {
+  it('sits right before Search in the More menu and opens the overview without toggling', () => {
     const p = props();
-    const { container, getByLabelText } = render(<ProjectNode {...p} />);
-    const labels = [...container.querySelectorAll('button[aria-label]')].map((b) => b.getAttribute('aria-label'));
-    expect(labels.indexOf(OVERVIEW)).toBe(labels.indexOf('ccAgent.common.moreActions') - 1);
-    fireEvent.click(getByLabelText(OVERVIEW));
+    const view = render(<ProjectNode {...p} />);
+    expect(view.queryByLabelText(OVERVIEW)).toBeNull();
+    const items = openMenu(view);
+    expect(items.indexOf(OVERVIEW)).toBe(items.indexOf(SEARCH) - 1);
+    fireEvent.click(view.getByText(OVERVIEW));
     expect(p.onOpenOverview).toHaveBeenCalledWith(p.project);
     expect(p.onToggle).not.toHaveBeenCalled();
   });
 
-  it('is hidden for remote projects', () => {
+  it('is absent from the menu of remote projects', () => {
     const p = props();
-    const { queryByLabelText } = render(
+    const view = render(
       <ProjectNode {...p} project={{ ...p.project, projectKey: 'remote:host:/demo', scope: 'remote', remoteHostId: 'host' }} />,
     );
-    expect(queryByLabelText(OVERVIEW)).toBeNull();
+    const items = openMenu(view);
+    expect(items).toContain(SEARCH);
+    expect(items).not.toContain(OVERVIEW);
   });
 });

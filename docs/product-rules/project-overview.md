@@ -2,12 +2,15 @@
 
 > **状态**：提案实现中（PR 1：只读概览页）
 > **适用范围**：桌面端本机项目的概览页及其入口
-> **读取时机**：修改项目概览页、其入口按钮或任务分列规则之前
+> **读取时机**：修改项目概览页、其菜单入口或任务分列规则之前
 
 ## 1. 入口
 
-本机项目行悬停时，按钮组为「项目概览 → 更多 → 新建任务」，概览按钮位于「更多」之前。
-远程项目（SSH、远程设备）不显示该按钮。点击按钮只打开概览页，不折叠或展开项目行。
+入口在项目行「更多」菜单（悬停按钮与右键共用同一菜单）浏览一组的第一项，位于「搜索」之前。
+远程项目（SSH、远程设备）菜单中不显示该项。点击只打开概览页，不折叠或展开项目行。
+
+不做成独立的悬停按钮（PR #7523 评审讨论 #7544）：悬停按钮组保持「更多 + 新建任务」两个，
+本机与远程项目一致，鼠标在不同项目行之间移动时不跳动，也不额外挤占长项目名。
 
 ## 2. 任务分列
 
@@ -40,5 +43,5 @@
 页面：`apps/desktop/src/renderer/features/cc-agent/project-overview/ProjectOverviewRoute.tsx`
 （路由 `/cc-agent/project/:projectKey`）；分列：`apps/desktop/src/renderer/features/cc-agent/lib/projectOverviewColumns.ts`；
 回归：同目录 `__tests__/projectOverviewColumns.test.ts`。
-入口按钮：`apps/desktop/src/renderer/features/cc-agent/sidebar/sections/ProjectNode.tsx`；
+入口菜单项：`apps/desktop/src/renderer/features/cc-agent/sidebar/sections/ProjectNode.tsx`；
 回归：`apps/desktop/src/renderer/__tests__/projectLampMerge.test.tsx`（project overview entry）。
