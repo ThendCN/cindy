@@ -13757,6 +13757,7 @@
         "removeFromSidebarConfirmAction": "移除專案",
         "removeFromSidebarFailed": "無法從側欄移除專案，請重試",
         "showFiles": "檢視檔案",
+        "overview": "專案概覽",
         "archivedAll": "全部歸檔",
         "unarchiveAll": "全部取消歸檔",
         "openInExplorer": "在檔案管理器中開啟",

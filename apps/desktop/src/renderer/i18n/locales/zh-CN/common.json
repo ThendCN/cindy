@@ -13757,6 +13757,7 @@
         "removeFromSidebarConfirmAction": "移除项目",
         "removeFromSidebarFailed": "无法从侧栏移除项目，请重试",
         "showFiles": "查看文件",
+        "overview": "项目概览",
         "archivedAll": "全部归档",
         "unarchiveAll": "全部取消归档",
         "openInExplorer": "在文件管理器中打开",

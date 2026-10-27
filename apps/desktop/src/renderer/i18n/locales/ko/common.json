@@ -13762,6 +13762,7 @@
         "syncCodexNone": "이 프로젝트의 Codex 세션을 찾을 수 없습니다",
         "syncCodexFailed": "Codex 동기화 실패: {{error}}",
         "showFiles": "파일 보기",
+        "overview": "프로젝트 개요",
         "archivedAll": "모두 보관",
         "unarchiveAll": "모두 보관 해제",
         "openInExplorer": "파일 관리자에서 열기",

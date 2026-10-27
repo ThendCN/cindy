@@ -2924,6 +2924,12 @@ function ExpandedView({
     [activeSessionId, sessions, navigate, t],
   );
 
+  /* ---- Project 行内的项目概览按钮(docs/product-rules/project-overview.md) ---- */
+  const handleOpenProjectOverview = useCallback(
+    (project: ProjectNode) => navigate(`/cc-agent/project/${encodeURIComponent(project.projectKey)}`),
+    [navigate],
+  );
+
   /* ---- Rename handler ---- */
   const handleRename = useCallback(
     async (sessionId: string, editedTitle: string) => {
@@ -3905,6 +3911,7 @@ function ExpandedView({
                       onLinkCodexProject={handleLinkCodexProject}
                       linkingCodexProject={linkingCodexProject === project.projectKey}
                       onBrowseFiles={handleBrowseFiles}
+                      onOpenOverview={handleOpenProjectOverview}
                       onArchiveAll={handleArchiveAllInProject}
                     />
                   )}
@@ -3965,6 +3972,7 @@ function ExpandedView({
                   onLinkCodexProject={handleLinkCodexProject}
                   linkingCodexProject={linkingCodexProject}
                   onBrowseFiles={handleBrowseFiles}
+                  onOpenOverview={handleOpenProjectOverview}
                   onArchiveAll={handleArchiveAllInProject}
                   onSearchDialogues={handleSearchDialogues}
                   onArchiveAllDialogues={handleArchiveAllDialogues}

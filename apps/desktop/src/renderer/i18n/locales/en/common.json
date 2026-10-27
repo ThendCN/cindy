@@ -13811,6 +13811,7 @@
         "removeFromSidebarConfirmAction": "Remove Project",
         "removeFromSidebarFailed": "Couldn’t remove the project from the sidebar — try again.",
         "showFiles": "Show Files",
+        "overview": "Project Overview",
         "archivedAll": "Archive all",
         "unarchiveAll": "Restore all",
         "openInExplorer": "Open in file manager",

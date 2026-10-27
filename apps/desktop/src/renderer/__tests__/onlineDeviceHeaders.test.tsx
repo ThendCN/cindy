@@ -136,6 +136,7 @@ function props(groupDevice: boolean): ProjectsSectionProps {
     onLinkCodexProject: vi.fn(),
     linkingCodexProject: null,
     onBrowseFiles: vi.fn(),
+    onOpenOverview: vi.fn(),
     onArchiveAll: vi.fn(),
     onSearchDialogues: vi.fn(),
     onArchiveAllDialogues: vi.fn(),

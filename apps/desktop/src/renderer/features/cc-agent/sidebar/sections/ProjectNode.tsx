@@ -25,6 +25,7 @@ import {
   EllipsisVertical,
   Folder,
   FolderOpen,
+  LayoutDashboard,
   SquarePen,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -128,6 +129,8 @@ export interface ProjectNodeProps {
    *  父层负责挑出该 project 下「最近活跃且非 archived」的 session 并 navigate
    *  到 /cc-agent/files/:sessionId。 */
   onBrowseFiles: (project: ProjectNodeData) => void;
+  /** 打开项目概览页(docs/product-rules/project-overview.md);仅本机项目显示入口。 */
+  onOpenOverview: (project: ProjectNodeData) => void;
   /** 右键菜单 → 归档该 project 下所有非执行中的 session（带二次确认）。 */
   onArchiveAll: (project: ProjectNodeData) => void;
 }
@@ -168,6 +171,7 @@ export const ProjectNode = memo(function ProjectNode({
   onLinkCodexProject,
   linkingCodexProject,
   onBrowseFiles,
+  onOpenOverview,
   onArchiveAll,
 }: ProjectNodeProps) {
   return (
@@ -199,6 +203,7 @@ export const ProjectNode = memo(function ProjectNode({
         onLinkCodexProject={onLinkCodexProject}
         linkingCodexProject={linkingCodexProject}
         onBrowseFiles={onBrowseFiles}
+        onOpenOverview={onOpenOverview}
         onArchiveAll={onArchiveAll}
       />
 
@@ -263,6 +268,7 @@ type ProjectHeaderProps = Pick<
   | 'onLinkCodexProject'
   | 'linkingCodexProject'
   | 'onBrowseFiles'
+  | 'onOpenOverview'
   | 'onArchiveAll'
 >;
 
@@ -284,6 +290,7 @@ const ProjectHeader = memo(function ProjectHeader({
   onLinkCodexProject,
   linkingCodexProject,
   onBrowseFiles,
+  onOpenOverview,
   onArchiveAll,
 }: ProjectHeaderProps) {
   const { t } = useTranslation();
@@ -540,6 +547,8 @@ const ProjectHeader = memo(function ProjectHeader({
                     : 'hidden group-hover:flex group-focus-within/slot:flex',
                 )}
               >
+                {/* 占位与下方按钮数一致:本机项目多一个「项目概览」。 */}
+                {!isRemote && <span className="size-5 shrink-0" />}
                 <span className="size-5 shrink-0" />
                 <span className="size-5 shrink-0" />
               </div>
@@ -554,6 +563,16 @@ const ProjectHeader = memo(function ProjectHeader({
                 {/* More 按钮 —— 点击锚定 menuPos 到按钮正下方,复用下面同一份
                     DropdownMenu(右键也走它,菜单 items 一份维护)。原本 Search /
                     ShowFiles / OpenInExplorer 三个独立按钮整合到这个菜单里。 */}
+                {/* 项目概览 —— 独立按钮,位于 More 之前(docs/product-rules/project-overview.md §1);
+                    远程项目暂不支持概览页,不渲染。 */}
+                {!isRemote && (
+                  <ProjectAction
+                    label={t('ccAgent.sidebar.projectAction.overview')}
+                    onClick={() => onOpenOverview(project)}
+                  >
+                    <LayoutDashboard size={14} strokeWidth={2} />
+                  </ProjectAction>
+                )}
                 <ProjectAction
                   label={t('ccAgent.common.moreActions')}
                   onClick={(e) => {

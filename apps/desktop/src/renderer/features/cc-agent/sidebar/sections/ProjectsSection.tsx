@@ -274,6 +274,7 @@ export interface ProjectsSectionProps {
   linkingCodexProject: string | null;
   /** 进入 workdir 文件浏览模式 (vscode-style file tree + body viewer)。 */
   onBrowseFiles: (project: ProjectNodeData) => void;
+  onOpenOverview: (project: ProjectNodeData) => void;
   /** 右键菜单 → 归档该 project 下所有非执行中的 session（带二次确认）。 */
   onArchiveAll: (project: ProjectNodeData) => void;
   /** 专属对话菜单使用完整组成员，不受组内折叠条数影响。 */
@@ -335,6 +336,7 @@ export function ProjectsSection({
   onLinkCodexProject,
   linkingCodexProject,
   onBrowseFiles,
+  onOpenOverview,
   onArchiveAll,
   onSearchDialogues,
   onArchiveAllDialogues,
@@ -977,6 +979,7 @@ export function ProjectsSection({
       onLinkCodexProject={onLinkCodexProject}
       linkingCodexProject={linkingCodexProject === project.projectKey}
       onBrowseFiles={onBrowseFiles}
+      onOpenOverview={onOpenOverview}
       onArchiveAll={onArchiveAll}
     />
   );

@@ -13762,6 +13762,7 @@
         "syncCodexNone": "このプロジェクトの Codex セッションが見つかりません",
         "syncCodexFailed": "Codex 同期に失敗しました:{{error}}",
         "showFiles": "ファイルを表示",
+        "overview": "プロジェクト概要",
         "archivedAll": "すべてアーカイブ",
         "unarchiveAll": "すべてアーカイブ解除",
         "openInExplorer": "ファイルマネージャーで開く",

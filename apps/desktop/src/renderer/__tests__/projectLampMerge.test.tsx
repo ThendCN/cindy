@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   ProjectNode,
@@ -56,6 +56,7 @@ function props(): ProjectNodeProps {
     onLinkCodexProject: vi.fn(),
     linkingCodexProject: false,
     onBrowseFiles: vi.fn(),
+    onOpenOverview: vi.fn(),
     onArchiveAll: vi.fn(),
   };
 }
@@ -106,5 +107,36 @@ describe('project lamp after upstream sidebar merge', () => {
     const header = container.querySelector('[data-project-header]')!;
     expect(header.querySelectorAll('.rounded-full').length).toBe(0);
     expect(header.querySelector('.session-status-breathing')).toBeNull();
+  });
+});
+
+/*
+ * 测试价值
+ * - 生产入口与可观察结果:ProjectNode 项目行;悬停按钮组里「项目概览」的位置、显隐与点击结果。
+ * - 规则依据:docs/product-rules/project-overview.md §1(独立按钮位于「更多」之前,远程不显示,
+ *   点击只打开概览、不折叠项目行)。
+ * - 现有覆盖缺口:本文件只覆盖灯语,没有覆盖项目行按钮。
+ * - 最小失败输入:本机项目点击概览按钮;scope=remote 的项目。
+ * - tier:unit(jsdom),与本文件同一组件入口。
+ */
+describe('project overview entry', () => {
+  const OVERVIEW = 'ccAgent.sidebar.projectAction.overview';
+
+  it('sits right before More on local projects and opens the overview without toggling', () => {
+    const p = props();
+    const { container, getByLabelText } = render(<ProjectNode {...p} />);
+    const labels = [...container.querySelectorAll('button[aria-label]')].map((b) => b.getAttribute('aria-label'));
+    expect(labels.indexOf(OVERVIEW)).toBe(labels.indexOf('ccAgent.common.moreActions') - 1);
+    fireEvent.click(getByLabelText(OVERVIEW));
+    expect(p.onOpenOverview).toHaveBeenCalledWith(p.project);
+    expect(p.onToggle).not.toHaveBeenCalled();
+  });
+
+  it('is hidden for remote projects', () => {
+    const p = props();
+    const { queryByLabelText } = render(
+      <ProjectNode {...p} project={{ ...p.project, projectKey: 'remote:host:/demo', scope: 'remote', remoteHostId: 'host' }} />,
+    );
+    expect(queryByLabelText(OVERVIEW)).toBeNull();
   });
 });
