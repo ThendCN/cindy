@@ -13155,6 +13155,7 @@
     }
   },
   "ccAgent": {
+    "projectOverview": {"title":"專案概覽","meta_one":"{{path}} · {{count}} 個任務","meta_other":"{{path}} · {{count}} 個任務","columns":{"running":"進行中","waiting":"等你處理","recent":"最近","archived":"已歸檔"},"emptyColumn":"暫無","notFound":"此電腦上沒有這個專案的任務"},
     "sessionEntry": {
       "missing": "找不到這條任務，它可能已被刪除。",
       "denied": "目前帳號或電腦無法存取這條任務。",

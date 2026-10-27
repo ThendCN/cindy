@@ -13209,6 +13209,7 @@
     }
   },
   "ccAgent": {
+    "projectOverview": {"title":"Project Overview","meta_one":"{{path}} · {{count}} session","meta_other":"{{path}} · {{count}} sessions","columns":{"running":"In Progress","waiting":"Needs You","recent":"Recent","archived":"Archived"},"emptyColumn":"None","notFound":"No sessions for this project on this computer"},
     "sessionEntry": {
       "missing": "This session could not be found. It may have been deleted.",
       "denied": "This account or computer cannot access this session.",

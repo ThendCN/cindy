@@ -436,7 +436,7 @@ export function useSessionRunningStatus(
 }
 
 /** Extract the set of currently-running session IDs from the status map. */
-function deriveRunningSet(statusMap: ReadonlyMap<string, SessionStatusInfo>): ReadonlySet<string> {
+export function deriveRunningSet(statusMap: ReadonlyMap<string, SessionStatusInfo>): ReadonlySet<string> {
   const set = new Set<string>();
   for (const [id, info] of statusMap) {
     if (info.isRunning) set.add(id);

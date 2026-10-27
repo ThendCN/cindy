@@ -13155,6 +13155,7 @@
     }
   },
   "ccAgent": {
+    "projectOverview": {"title":"项目概览","meta_one":"{{path}} · {{count}} 个任务","meta_other":"{{path}} · {{count}} 个任务","columns":{"running":"进行中","waiting":"等你处理","recent":"最近","archived":"已归档"},"emptyColumn":"暂无","notFound":"此电脑上没有这个项目的任务"},
     "sessionEntry": {
       "missing": "找不到这条任务，它可能已被删除。",
       "denied": "当前账号或电脑无法访问这条任务。",

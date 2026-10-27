@@ -18,6 +18,7 @@ import { CCAgentSessionView } from '@/features/cc-agent/CCAgentSessionView';
 import { NewMakerDraftRoute } from '@/features/cc-agent/NewMakerDraftRoute';
 import { OrcaWorkflowRoute } from '@/features/cc-agent/OrcaWorkflowRoute';
 import { WorkdirBrowseRoute } from '@/features/cc-agent/workdir-browse/WorkdirBrowseRoute';
+import { ProjectOverviewRoute } from '@/features/cc-agent/project-overview/ProjectOverviewRoute';
 import { IssueTrackerFeatureLayout } from '@/features/issue-tracker/IssueTrackerFeatureLayout';
 import { SkillhubFeatureLayout } from '@/features/skillhub/SkillhubFeatureLayout';
 import { SkillhubLocalLayout } from '@/features/skillhub/SkillhubLocalLayout';
@@ -112,6 +113,8 @@ export const router = createHashRouter([
                       // Workdir File Browser — 文件树视图(vscode-style),sidebar 自动 swap。
                       // 静态段 'files' 必须在 :sessionId 之前匹配。
                       { path: 'files/:sessionId', element: <WorkdirBrowseRoute /> },
+                      // 项目概览(docs/product-rules/project-overview.md),静态段须在 :sessionId 之前。
+                      { path: 'project/:projectKey', element: <ProjectOverviewRoute /> },
                       { path: 'orca/new', element: <Navigate to="/cc-agent/new" replace /> },
                       { path: 'orca/:sessionId', element: <OrcaWorkflowRoute /> },
                       { path: ':sessionId', element: <CCAgentSessionView /> },

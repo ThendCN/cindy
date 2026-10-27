@@ -36,5 +36,6 @@
 
 ## 4. 实现与回归
 
-分列：`apps/desktop/src/renderer/features/cc-agent/lib/projectOverviewColumns.ts`；
+页面：`apps/desktop/src/renderer/features/cc-agent/project-overview/ProjectOverviewRoute.tsx`
+（路由 `/cc-agent/project/:projectKey`）；分列：`apps/desktop/src/renderer/features/cc-agent/lib/projectOverviewColumns.ts`；
 回归：同目录 `__tests__/projectOverviewColumns.test.ts`。

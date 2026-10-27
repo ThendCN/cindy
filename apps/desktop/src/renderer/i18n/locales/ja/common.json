@@ -13155,6 +13155,7 @@
     }
   },
   "ccAgent": {
+    "projectOverview": {"title":"プロジェクト概要","meta_one":"{{path}} · {{count}} 件のセッション","meta_other":"{{path}} · {{count}} 件のセッション","columns":{"running":"実行中","waiting":"対応待ち","recent":"最近","archived":"アーカイブ済み"},"emptyColumn":"なし","notFound":"このコンピューターにはこのプロジェクトのセッションがありません"},
     "sessionEntry": {
       "missing": "このセッションが見つかりません。削除された可能性があります。",
       "denied": "このアカウントまたはコンピューターでは、このセッションにアクセスできません。",
