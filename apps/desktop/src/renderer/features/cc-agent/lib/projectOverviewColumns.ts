@@ -8,6 +8,8 @@
  */
 
 import type { Session } from '@/lib/ccAgent.types';
+import { isOrcaWorkerSession } from '@/lib/orcaSessionIdentity';
+import { projectKeyComparisonKey, type ProjectNode } from './projectGrouping';
 import { dotToneOf, type SessionLampContext } from './sessionLampAggregation';
 
 export type ProjectOverviewColumn = 'running' | 'waiting' | 'recent' | 'archived';
@@ -27,4 +29,23 @@ export function groupProjectOverviewColumns<T extends Pick<Session, 'id' | 'stat
   const columns: Record<ProjectOverviewColumn, T[]> = { running: [], waiting: [], recent: [], archived: [] };
   for (const session of sessions) columns[columnOf(session, lamp)].push(session);
   return columns;
+}
+
+/**
+ * 按路由里的项目键找本机项目,口径与侧边栏一致(PR #7523 review):
+ *   - 用 projectKeyComparisonKey 比较:侧边栏的项目键可能取自已保存目录(如 C:/Repo),
+ *     概览页分组时只有任务目录(c:/repo),Windows 盘符路径大小写不同也是同一项目;
+ *   - 去掉 Orca Worker:侧边栏在分组前就排除它们。运行状态仍需完整任务列表
+ *     (Lead 是否在跑取决于其 Worker),所以只在这里过滤项目内的任务。
+ */
+export function findOverviewProject(
+  projects: readonly ProjectNode[],
+  routeKey: string,
+  platform: string,
+): ProjectNode | null {
+  const target = projectKeyComparisonKey(routeKey, platform);
+  const project = projects.find(
+    (p) => p.scope === 'local' && projectKeyComparisonKey(p.projectKey, platform) === target,
+  );
+  return project ? { ...project, sessions: project.sessions.filter((s) => !isOrcaWorkerSession(s)) } : null;
 }

@@ -13,7 +13,9 @@ import { describe, expect, it } from 'vitest';
 
 import type { AttentionKind } from '@/lib/sessionAttentionStore';
 import type { Session } from '@/lib/ccAgent.types';
-import { groupProjectOverviewColumns, type ProjectOverviewColumn } from '../projectOverviewColumns';
+import { sessionCardVisualCases } from '@/features/cc-agent/sidebar/__fixtures__/sessionCardVisualCases';
+import { groupSessions } from '../projectGrouping';
+import { findOverviewProject, groupProjectOverviewColumns, type ProjectOverviewColumn } from '../projectOverviewColumns';
 
 const lamp = (over: {
   running?: string[];
@@ -51,5 +53,48 @@ describe('groupProjectOverviewColumns', () => {
       recent: [sessions[0], sessions[2]],
       archived: [sessions[3]],
     });
+  });
+});
+
+/*
+ * 回归(PR #7523 review,Greptile P1 / P2):概览页找项目必须与侧边栏同口径。
+ * - 生产入口:findOverviewProject,输入为真实 groupSessions 的结果。
+ * - P1:侧边栏用已保存目录(C:/Repo)作项目键,概览页分组时只有任务目录(c:/repo);
+ *   Windows 盘符路径大小写不同,全等比较找不到项目。
+ * - P2:侧边栏分组前排除 Orca Worker;Worker 继承 Lead 目录,不能混进概览任务。
+ */
+describe('findOverviewProject', () => {
+  const base = sessionCardVisualCases[0].session;
+  const session = (id: string, workingDir: string, over: Partial<Session> = {}): Session => ({
+    ...base,
+    id,
+    workingDir,
+    pinnedAt: null,
+    status: 'active',
+    orcaRole: null,
+    ...over,
+  });
+
+  it('matches a Windows drive path that differs only in case from the sidebar project key', () => {
+    const sidebarKey = groupSessions([session('t1', 'c:/repo')], {
+      localPlatform: 'win32',
+      persistentLocalProjects: [{ workingDir: 'C:/Repo', lastUsedAt: base.updatedAt, knownAgentKinds: [] }],
+    }).projects[0].projectKey;
+    const overviewGroups = groupSessions([session('t1', 'c:/repo')], { localPlatform: 'win32' });
+    expect(findOverviewProject(overviewGroups.projects, sidebarKey, 'win32')?.sessions.map((s) => s.id)).toEqual(['t1']);
+  });
+
+  it('leaves Orca workers out of the project tasks', () => {
+    const groups = groupSessions(
+      [session('lead', '/repo', { orcaRole: 'lead' }), session('worker', '/repo', { orcaRole: 'worker' })],
+      { localPlatform: 'linux' },
+    );
+    expect(findOverviewProject(groups.projects, 'local:/repo', 'linux')?.sessions.map((s) => s.id)).toEqual(['lead']);
+  });
+
+  it('ignores remote projects', () => {
+    const groups = groupSessions([session('r1', '/repo', { remoteHostId: 'host' })], { localPlatform: 'linux' });
+    const remoteKey = groups.projects[0].projectKey;
+    expect(findOverviewProject(groups.projects, remoteKey, 'linux')).toBeNull();
   });
 });

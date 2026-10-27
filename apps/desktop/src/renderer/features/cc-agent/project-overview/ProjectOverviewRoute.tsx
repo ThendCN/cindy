@@ -2,7 +2,8 @@
  * ProjectOverviewRoute —— /cc-agent/project/:projectKey 项目概览页
  * ---------------------------------------------------------------------------
  * 规则正本:docs/product-rules/project-overview.md。
- *   - 归属与侧边栏项目行一致:同一份 useProjectGroups(含置顶),只认本机项目。
+ *   - 归属与侧边栏项目行一致:同一份 useProjectGroups(含置顶),findOverviewProject 按
+ *     比较键匹配并去掉 Orca Worker;只认本机项目。
  *   - 分列与灯语与侧边栏同源(groupProjectOverviewColumns / dotToneOf)。
  *   - 只读订阅:侧边栏是系统通知与提醒清除的唯一 owner,本页不调用
  *     useSessionRunningStatus,也不读侧边栏内部的 urgency context ——
@@ -32,7 +33,7 @@ import {
   useOrcaLeadWorkerAttention,
   useSessionAttentionKindsWithOrcaLeads,
 } from '../lib/orcaLeadWorkerAttention';
-import { groupProjectOverviewColumns, type ProjectOverviewColumn } from '../lib/projectOverviewColumns';
+import { findOverviewProject, groupProjectOverviewColumns, type ProjectOverviewColumn } from '../lib/projectOverviewColumns';
 import { getSessionDisplayTitle } from '../lib/sessionDisplayTitle';
 import { dotToneOf, type SessionLampContext } from '../lib/sessionLampAggregation';
 import { SessionStatusIcon } from '../sidebar/SessionStatusIcon';
@@ -72,8 +73,9 @@ export function ProjectOverviewRoute() {
     [allSessions],
   );
   const { aliases } = useProjectAliases();
-  const groups = useProjectGroups(sessions, aliases, true, undefined, window.electronAPI.platform);
-  const project = groups.projects.find((p) => p.scope === 'local' && p.projectKey === projectKey);
+  const platform = window.electronAPI.platform;
+  const groups = useProjectGroups(sessions, aliases, true, undefined, platform);
+  const project = useMemo(() => findOverviewProject(groups.projects, projectKey, platform), [groups, projectKey, platform]);
   const lamp = useOverviewLamp(sessions);
   const columns = useMemo(() => groupProjectOverviewColumns(project?.sessions ?? [], lamp), [project, lamp]);
 
